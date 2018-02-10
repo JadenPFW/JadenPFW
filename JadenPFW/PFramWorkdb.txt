@@ -1,0 +1,91 @@
+表结构文档：
+1.建立表空间、用户和权限；
+create tablespace pframwork logging datafile 'E:\Oracle\oracle\product\10.2.0\oradata\orcl\pframwork.dbf' size 50m autoextend on next 50m maxsize 20480m extent management local;
+
+create user pframwork identified by victor default tablespace pframwork; 
+
+grant connect,resource,dba to pframwork;
+
+2.创建表
+-- Create table
+create table PFW_DICT_USER
+(
+  ID           NUMBER(4) not null,
+  USERID       NUMBER(4) not null,
+  USERCODE     VARCHAR2(20) not null,
+  USERNAME     VARCHAR2(30) not null,
+  PASSWORD     VARCHAR2(50),
+  PWDVALIDDATE DATE,
+  PWDWRO       NUMBER(2) default 0,
+  LOGOUT       NUMBER(1) default 0
+)
+tablespace PFRAMWORK
+  pctfree 10
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 64K
+    next 1M
+    minextents 1
+    maxextents unlimited
+  );
+-- Add comments to the columns 
+comment on column PFW_DICT_USER.PWDVALIDDATE
+  is '密码有效期';
+comment on column PFW_DICT_USER.PWDWRO
+  is '密码操作失败次数';
+comment on column PFW_DICT_USER.LOGOUT
+  is '注销：0:正常使用  1:注销 2:锁定';
+
+-- Create table
+create table PFW_IDENTITY
+(
+  TABLEN    VARCHAR2(20) not null,
+  CURRENTV  NUMBER(18) default 0 not null,
+  INITIALV  NUMBER(4) default 1 not null,
+  INCREASEV NUMBER(4) default 1 not null
+)
+tablespace PFRAMWORK
+  pctfree 10
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 64K
+    next 1M
+    minextents 1
+    maxextents unlimited
+  );
+
+-- Create table
+create table PFW_SYSPARA
+(
+  TRID     NUMBER(4) not null,
+  PARANAME VARCHAR2(25) not null,
+  CURRENTV VARCHAR2(10) not null,
+  DEFAULTV VARCHAR2(10) not null,
+  COMMENTS VARCHAR2(255)
+)
+tablespace PFRAMWORK
+  pctfree 10
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 64K
+    next 1M
+    minextents 1
+    maxextents unlimited
+  );
+-- Add comments to the columns 
+comment on column PFW_SYSPARA.TRID
+  is '表记录ID';
+comment on column PFW_SYSPARA.PARANAME
+  is '参数名称';
+comment on column PFW_SYSPARA.CURRENTV
+  is '当前值';
+comment on column PFW_SYSPARA.DEFAULTV
+  is '默认值';
+comment on column PFW_SYSPARA.COMMENTS
+  is '备注';
